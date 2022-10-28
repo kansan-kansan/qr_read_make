@@ -1,7 +1,8 @@
+from posixpath import abspath
 import cv2
 from pyzbar.pyzbar import decode, ZBarSymbol
 import pyqrcode
-
+import os
 #----------------{\n}(改行)は基本的にinputは先頭に。
 #-------------------------
 def main():
@@ -17,9 +18,15 @@ def main():
                 # initial
                 # -----------------------------------------------------------
                 font = cv2.FONT_HERSHEY_SIMPLEX
-                url = str(input("\n相対パス>>"))
-                FILE_PNG_AB = url
-
+                url = str(input("\n絶対パス>>"))
+                new_url = url.strip('""')
+                print(new_url)
+                """"""
+                url_abstract = os.path.relpath(new_url)
+                FILE_PNG_AB = url_abstract
+                
+                #絶対パスを入力後、相対パスに移動
+                #絶対パスから相対パスへ変換
                 # -----------------------------------------------------------
                 # function_qr_dec
                 # -----------------------------------------------------------
@@ -27,7 +34,7 @@ def main():
 
                     # QRコードデコード
                     value = decode(img_bgr, symbols=[ZBarSymbol.QRCODE])
-
+                    #print(value)
                     if value:
                         for qrcode in value:
 
@@ -36,7 +43,7 @@ def main():
 
                             # QRコードデータ
                             dec_inf = qrcode.data.decode('utf-8')
-                            print('\ndec:', dec_inf)
+                            print(f'\ndec:{dec_inf}')
                             img_bgr = cv2.putText(img_bgr, dec_inf, (x, y - 6), font, .3, (255, 0, 0), 1, cv2.LINE_AA)
 
                             # バウンディングボックス
@@ -67,6 +74,8 @@ def main():
                     if choose_extension == "png":
                         file_name = name+'.'+choose_extension
                         print(f"\nSaved it as {file_name}.\n")
+                        #abspath = str(input("保存先(仮)>>"))
+                        #cv2.imwrite(abspath,file_name)
                         b.png(file_name,scale=6)
                         break
 
@@ -99,5 +108,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-        
